@@ -13,7 +13,7 @@ EGIT_SUBMODULES=( '-*' '*' )
 
 LICENSE="Apache-2.0 BSD BSD-2 GPL-2+ GPL-3 ISC LGPL-2.1+ LGPL-3+"
 SLOT="0"
-IUSE="gamemode lto pch test"
+IUSE="+gamemode lto pch test"
 
 RESTRICT="!test? ( test )"
 
