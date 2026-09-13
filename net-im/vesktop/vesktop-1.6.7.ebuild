@@ -53,7 +53,7 @@ BDEPEND="
 	sys-apps/coreutils
 "
 
-S="${WORKDIR}/${P}"
+S="${WORKDIR}/Vesktop-${PV}"
 
 src_unpack() {
 	if [[ ${PV} == *9999* ]]; then

@@ -76,7 +76,6 @@ BDEPEND="
 "
 
 PATCHES=(
-	"${FILESDIR}"/tdesktop-6.5.1-zlib-1.3.2.patch
 )
 
 src_unpack() {
