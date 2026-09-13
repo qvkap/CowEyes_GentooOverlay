@@ -27,6 +27,9 @@ CDEPEND="
 	dev-cpp/ada:=
 	dev-cpp/cld3:=
 	>=dev-cpp/glibmm-2.77:2.68
+	dev-cpp/toomanycooks
+	dev-libs/libfido2:=
+	sys-apps/hwloc:=
 	dev-libs/glib:2
 	dev-libs/openssl:=
 	>=dev-libs/protobuf-21.12
