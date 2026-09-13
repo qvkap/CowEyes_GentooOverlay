@@ -22,6 +22,7 @@ IUSE="dbus enchant +fonts +libdispatch lto screencast wayland webkit +X"
 CDEPEND="
 	!net-im/telegram-desktop-bin
 	app-arch/lz4:=
+	app-text/cmark-gfm:=
 	dev-cpp/abseil-cpp:=
 	dev-cpp/ada:=
 	dev-cpp/cld3:=
@@ -104,6 +105,7 @@ src_prepare() {
 	sed -e '/find_package(lz4 /d' -i cmake/external/lz4/CMakeLists.txt || die
 	sed -e '/find_package(Opus /d' -i cmake/external/opus/CMakeLists.txt || die
 	sed -e '/find_package(xxHash /d' -i cmake/external/xxhash/CMakeLists.txt || die
+	sed -e '/find_package(cmark-gfm\(-extensions\)\? /d' -i cmake/external/cmark_gfm/CMakeLists.txt || die
 
 	local keep=(
 		rlottie
