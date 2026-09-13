@@ -118,6 +118,7 @@ src_prepare() {
 		libprisma
 		tgcalls
 		xdg-desktop-portal
+		MicroTeX
 	)
 	for x in Telegram/ThirdParty/*; do
 		has "${x##*/}" "${keep[@]}" || rm -r "${x}" || die
