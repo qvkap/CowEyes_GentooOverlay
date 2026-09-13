@@ -108,6 +108,7 @@ src_prepare() {
 	sed -e '/find_package(Opus /d' -i cmake/external/opus/CMakeLists.txt || die
 	sed -e '/find_package(xxHash /d' -i cmake/external/xxhash/CMakeLists.txt || die
 	sed -e '/find_package(cmark-gfm\(-extensions\)\? /d' -i cmake/external/cmark_gfm/CMakeLists.txt || die
+	sed -e '/find_package(minizip /d' -i cmake/external/minizip/CMakeLists.txt || die
 
 	local keep=(
 		rlottie
