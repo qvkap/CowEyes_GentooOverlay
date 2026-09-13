@@ -5,6 +5,11 @@
 		<email>rorka@localhost</email>
 		<name>qvkap</name>
 	</maintainer>
+	<use>
+		<flag name="gamemode">Enable Feral GameMode optimization support during game launch</flag>
+		<flag name="lto">Build with Link Time Optimization for maximum performance</flag>
+		<flag name="pch">Enable precompiled headers to speed up build time</flag>
+	</use>
 	<upstream>
 		<bugs-to>https://github.com/ElyPrismLauncher/Launcher/issues</bugs-to>
 		<remote-id type="github">ElyPrismLauncher/Launcher</remote-id>

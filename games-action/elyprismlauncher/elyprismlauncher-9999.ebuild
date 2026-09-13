@@ -4,7 +4,7 @@
 EAPI=8
 
 QTMIN=6.4.0
-inherit cmake java-pkg-2 optfeature toolchain-funcs xdg git-r3
+inherit cmake java-pkg-2 flag-o-matic optfeature toolchain-funcs xdg git-r3
 
 DESCRIPTION="PineconeMC (ElyPrismLauncher) - custom, open source Minecraft launcher"
 HOMEPAGE="https://github.com/ElyPrismLauncher/Launcher"
@@ -13,7 +13,7 @@ EGIT_SUBMODULES=( '-*' '*' )
 
 LICENSE="Apache-2.0 BSD BSD-2 GPL-2+ GPL-3 ISC LGPL-2.1+ LGPL-3+"
 SLOT="0"
-IUSE="test"
+IUSE="gamemode lto pch test"
 
 RESTRICT="!test? ( test )"
 
@@ -23,7 +23,7 @@ COMMON_DEPEND="
 	dev-cpp/tomlplusplus
 	>=dev-qt/qtbase-${QTMIN}:6[concurrent,gui,opengl,network,vulkan,widgets,xml(+)]
 	>=dev-qt/qtnetworkauth-${QTMIN}:6
-	games-util/gamemode
+	gamemode? ( games-util/gamemode )
 	media-gfx/qrencode:=
 	virtual/zlib:=
 "
@@ -62,13 +62,23 @@ src_prepare() {
 }
 
 src_configure() {
+	if use lto; then
+		if tc-is-clang; then
+			append-flags -flto=thin
+		else
+			append-flags -flto
+		fi
+	else
+		filter-lto
+	fi
+
 	local mycmakeargs=(
 		-DCMAKE_INSTALL_PREFIX="/usr"
 		-DLauncher_APP_BINARY_NAME="${PN}"
 		-DLauncher_BUILD_PLATFORM="Gentoo Linux"
 		-DLauncher_QT_VERSION_MAJOR=6
-
-		-DENABLE_LTO=$(tc-is-lto)
+		-DENABLE_LTO=$(usex lto)
+		-DLauncher_USE_PCH=$(usex pch)
 		-DBUILD_TESTING=$(usex test)
 	)
 

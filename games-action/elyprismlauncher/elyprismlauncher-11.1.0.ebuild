@@ -4,7 +4,7 @@
 EAPI=8
 
 QTMIN=6.4.0
-inherit cmake java-pkg-2 optfeature toolchain-funcs xdg
+inherit cmake java-pkg-2 flag-o-matic optfeature toolchain-funcs xdg
 
 DESCRIPTION="PineconeMC (ElyPrismLauncher) - custom, open source Minecraft launcher"
 HOMEPAGE="https://github.com/ElyPrismLauncher/Launcher"
@@ -21,7 +21,7 @@ KEYWORDS="~amd64"
 # rest of its libs: https://github.com/ElyPrismLauncher/Launcher/tree/develop/libraries
 LICENSE="Apache-2.0 BSD BSD-2 GPL-2+ GPL-3 ISC LGPL-2.1+ LGPL-3+"
 SLOT="0"
-IUSE="test"
+IUSE="gamemode lto pch test"
 
 RESTRICT="!test? ( test )"
 
@@ -32,7 +32,7 @@ COMMON_DEPEND="
 	dev-cpp/tomlplusplus
 	>=dev-qt/qtbase-${QTMIN}:6[concurrent,gui,opengl,network,vulkan,widgets,xml(+)]
 	>=dev-qt/qtnetworkauth-${QTMIN}:6
-	games-util/gamemode
+	gamemode? ( games-util/gamemode )
 	media-gfx/qrencode:=
 	virtual/zlib:=
 "
@@ -78,16 +78,25 @@ src_prepare() {
 }
 
 src_configure() {
-	local mycmakeargs=(
-		-DCMAKE_INSTALL_PREFIX="/usr"
-		# Resulting binary is named elyprismlauncher (upstream default)
-		-DLauncher_APP_BINARY_NAME="${PN}"
-		-DLauncher_BUILD_PLATFORM="Gentoo Linux"
-		-DLauncher_QT_VERSION_MAJOR=6
+		if use lto; then
+			if tc-is-clang; then
+				append-flags -flto=thin
+			else
+				append-flags -flto
+			fi
+		else
+			filter-lto
+		fi
 
-		-DENABLE_LTO=$(tc-is-lto)
-		-DBUILD_TESTING=$(usex test)
-	)
+		local mycmakeargs=(
+			-DCMAKE_INSTALL_PREFIX="/usr"
+			-DLauncher_APP_BINARY_NAME="${PN}"
+			-DLauncher_BUILD_PLATFORM="Gentoo Linux"
+			-DLauncher_QT_VERSION_MAJOR=6
+			-DENABLE_LTO=$(usex lto)
+			-DLauncher_USE_PCH=$(usex pch)
+			-DBUILD_TESTING=$(usex test)
+		)
 
 	cmake_src_configure
 }
