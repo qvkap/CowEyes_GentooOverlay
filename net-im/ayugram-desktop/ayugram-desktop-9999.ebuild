@@ -5,7 +5,7 @@ EAPI=8
 
 PYTHON_COMPAT=( python3_{11..14} )
 
-inherit xdg cmake python-any-r1 flag-o-matic optfeature git-r3
+inherit xdg cmake python-any-r1 flag-o-matic optfeature toolchain-funcs git-r3
 
 DESCRIPTION="Desktop Telegram client with good customization and Ghost mode."
 HOMEPAGE="https://github.com/AyuGram/AyuGramDesktop"
@@ -17,7 +17,7 @@ LICENSE="BSD GPL-3-with-openssl-exception LGPL-2+"
 SLOT="0"
 KEYWORDS=""
 
-IUSE="dbus enchant +fonts +libdispatch screencast wayland webkit +X"
+IUSE="dbus enchant +fonts +libdispatch lto screencast wayland webkit +X"
 
 CDEPEND="
 	!net-im/telegram-desktop-bin
@@ -138,6 +138,15 @@ src_configure() {
 	export XDG_DATA_DIRS="${ESYSROOT}/usr/share"
 
 	filter-flags -fno-delete-null-pointer-checks
+	if use lto; then
+		if tc-is-clang; then
+			append-flags -flto=thin
+		else
+			append-flags -flto
+		fi
+	else
+		filter-lto
+	fi
 	append-cppflags -DNDEBUG
 	use !libdispatch && append-cppflags -DCRL_FORCE_QT
 
