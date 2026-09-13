@@ -19,7 +19,7 @@ NPM_REGISTRY="${NPM_REGISTRY:-https://registry.npmjs.org}"
 
 LICENSE="MIT"
 SLOT="0"
-IUSE="web-ui models"
+IUSE="web-ui +models"
 
 RESTRICT="network-sandbox"
 
