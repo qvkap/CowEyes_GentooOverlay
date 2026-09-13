@@ -15,10 +15,10 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Install Gentoo ebuild tools
+      - name: Install dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y jq curl
+          sudo apt-get install -y jq curl wget coreutils
 
       - name: Check AyuGram Desktop release
         run: |
@@ -28,7 +28,6 @@ jobs:
             TARGET_EBUILD="net-im/ayugram-desktop/ayugram-desktop-${VERSION}.ebuild"
             if [ ! -f "$TARGET_EBUILD" ]; then
               echo "New AyuGram version detected: $VERSION"
-              # Find highest existing release ebuild to copy from
               PREV_EBUILD=$(ls -1 net-im/ayugram-desktop/ayugram-desktop-*.ebuild | grep -v '9999' | sort -V | tail -n1)
               cp "$PREV_EBUILD" "$TARGET_EBUILD"
               echo "BUMPED_AYU=true" >> $GITHUB_ENV
@@ -46,6 +45,18 @@ jobs:
               echo "New ElyPrismLauncher version detected: $VERSION"
               PREV_EBUILD=$(ls -1 games-action/elyprismlauncher/elyprismlauncher-*.ebuild | grep -v '9999' | sort -V | tail -n1)
               cp "$PREV_EBUILD" "$TARGET_EBUILD"
+              
+              TARBALL_URL="https://github.com/ElyPrismLauncher/Launcher/releases/download/${VERSION}/PineconeMC-${VERSION}.tar.gz"
+              TAR_NAME="elyprismlauncher-${VERSION}.tar.gz"
+              wget -q "$TARBALL_URL" -O "$TAR_NAME"
+              
+              FILE_SIZE=$(wc -c < "$TAR_NAME")
+              SHA512_HASH=$(sha512sum "$TAR_NAME" | awk '{print $1}')
+              BLAKE2B_HASH=$(b2sum "$TAR_NAME" | awk '{print $1}')
+              rm -f "$TAR_NAME"
+              
+              echo "DIST $TAR_NAME $FILE_SIZE BLAKE2B $BLAKE2B_HASH SHA512 $SHA512_HASH" > games-action/elyprismlauncher/Manifest
+              
               echo "BUMPED_ELY=true" >> $GITHUB_ENV
               echo "ELY_VER=$VERSION" >> $GITHUB_ENV
             fi
