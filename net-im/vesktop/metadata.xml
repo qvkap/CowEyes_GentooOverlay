@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "https://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+	<maintainer type="person">
+		<email>rorka@localhost</email>
+		<name>qvkap</name>
+	</maintainer>
+	<use>
+		<flag name="system-electron">Build and run using system Electron instead of downloading prebuilt Electron binaries</flag>
+	</use>
+	<upstream>
+		<bugs-to>https://github.com/Vencord/Vesktop/issues</bugs-to>
+		<remote-id type="github">Vencord/Vesktop</remote-id>
+	</upstream>
+</pkgmetadata>

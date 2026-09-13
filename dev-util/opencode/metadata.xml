@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "https://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+	<maintainer type="person">
+		<email>rorka@localhost</email>
+		<name>qvkap</name>
+	</maintainer>
+	<use>
+		<flag name="web-ui">Embed web UI assets into the binary (increases size and build time)</flag>
+		<flag name="models">Fetch models list online instead of baking in local offline defaults</flag>
+	</use>
+	<upstream>
+		<bugs-to>https://github.com/anomalyco/opencode/issues</bugs-to>
+		<remote-id type="github">anomalyco/opencode</remote-id>
+	</upstream>
+</pkgmetadata>
