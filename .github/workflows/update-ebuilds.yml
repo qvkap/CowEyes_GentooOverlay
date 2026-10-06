@@ -116,6 +116,39 @@ jobs:
             fi
           fi
 
+
+      - name: Check Thorium release
+        run: |
+          # Берём первый релиз, у которого ЕСТЬ AVX2 .deb (свежие теги публикуются без ассетов)
+          REL=$(curl -s "https://api.github.com/repos/Alex313031/Thorium/releases?per_page=50" \
+            | jq -c '[.[] | select(.assets | map(.name | endswith("_AVX2.deb")) | any)][0] // empty')
+          if [ -z "$REL" ]; then
+            echo "No Thorium release with AVX2 deb found."
+            exit 0
+          fi
+          TAG=$(echo "$REL" | jq -r '.tag_name')
+          ASSET_URL=$(echo "$REL" | jq -r '[.assets[] | select(.name | endswith("_AVX2.deb"))][0].browser_download_url')
+          VERSION=${TAG#M}
+          TARGET_EBUILD="www-client/thorium-browser/thorium-browser-${VERSION}.ebuild"
+          if [ ! -f "$TARGET_EBUILD" ]; then
+            echo "New Thorium version detected: $VERSION ($TAG)"
+            PREV_EBUILD=$(ls -1 www-client/thorium-browser/thorium-browser-*.ebuild | grep -v '9999' | sort -V | tail -n1)
+            cp "$PREV_EBUILD" "$TARGET_EBUILD"
+
+            TAR_NAME="thorium-browser-${VERSION}-AVX2.deb"
+            curl -sL "$ASSET_URL" -o "$TAR_NAME"
+
+            FILE_SIZE=$(wc -c < "$TAR_NAME")
+            SHA512_HASH=$(sha512sum "$TAR_NAME" | awk '{print $1}')
+            BLAKE2B_HASH=$(b2sum "$TAR_NAME" | awk '{print $1}')
+            rm -f "$TAR_NAME"
+
+            echo "DIST $TAR_NAME $FILE_SIZE BLAKE2B $BLAKE2B_HASH SHA512 $SHA512_HASH" > www-client/thorium-browser/Manifest
+
+            echo "BUMPED_THORIUM=true" >> $GITHUB_ENV
+            echo "THOR_VER=$VERSION" >> $GITHUB_ENV
+          fi
+
       - name: Commit and push changes
         run: |
           UPDATES=()
@@ -123,6 +156,7 @@ jobs:
           [ "$BUMPED_ELY" = "true" ] && UPDATES+=("elyprismlauncher to $ELY_VER")
           [ "$BUMPED_OPENCODE" = "true" ] && UPDATES+=("opencode to $OPENCODE_VER")
           [ "$BUMPED_VESKTOP" = "true" ] && UPDATES+=("vesktop to $VESKTOP_VER")
+          [ "$BUMPED_THORIUM" = "true" ] && UPDATES+=("thorium-browser to $THOR_VER")
 
           if [ ${#UPDATES[@]} -gt 0 ]; then
             git config --global user.name "github-actions[bot]"
