@@ -119,7 +119,6 @@ jobs:
 
       - name: Check Thorium release
         run: |
-          # Берём первый релиз, у которого ЕСТЬ AVX2 .deb (свежие теги публикуются без ассетов)
           REL=$(curl -s "https://api.github.com/repos/Alex313031/Thorium/releases?per_page=50" \
             | jq -c '[.[] | select(.assets | map(.name | endswith("_AVX2.deb")) | any)][0] // empty')
           if [ -z "$REL" ]; then
