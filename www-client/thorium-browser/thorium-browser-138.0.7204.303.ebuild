@@ -12,10 +12,8 @@ SLOT="0"
 KEYWORDS="~amd64"
 IUSE=""
 
-# .deb распаковывается в ${WORKDIR} (opt/, usr/), поэтому S = WORKDIR
 S="${WORKDIR}"
 
-# Chromium-бинарь не стрипаем (ломает build-id/антиотладку), исходников нет
 RESTRICT="strip"
 
 RDEPEND="
@@ -42,7 +40,6 @@ RDEPEND="
 	x11-misc/xdg-utils
 "
 
-# .deb: portage не умеет распаковывать сам — делаем вручную через ar
 src_unpack() {
 	cd "${WORKDIR}" || die
 	ar x "${DISTDIR}/${A}" || die "ar x failed"
@@ -56,13 +53,11 @@ src_install() {
 		[[ -d "${S}/${d}" ]] || continue
 		cp -a "${S}/${d}" "${D}/" || die
 	done
-	# /usr/bin/thorium-browser в .deb — симлинк, cp -a его сохранил
 	[[ -e "${D}/usr/bin/thorium-browser" ]] || \
 		dosym /opt/chromium.org/thorium/thorium-browser /usr/bin/thorium-browser
 }
 
 pkg_postinst() {
-	# обновление кэшей (если утилиты есть в системе)
 	command -v update-desktop-database >/dev/null && update-desktop-database -q \
 		"${EPREFIX}/usr/share/applications" 2>/dev/null || true
 	command -v update-mime-database >/dev/null && update-mime-database \
