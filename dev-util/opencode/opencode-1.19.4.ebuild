@@ -13,7 +13,7 @@ else
 	KEYWORDS="~amd64"
 fi
 
-BUN_VERSION="1.3.14"
+BUN_VERSION="1.4.4"
 BUN_URI="https://github.com/oven-sh/bun/releases/download/bun-v${BUN_VERSION}"
 NPM_REGISTRY="${NPM_REGISTRY:-https://registry.npmjs.org}"
 
@@ -146,6 +146,8 @@ src_unpack() {
 		build_args+=( --skip-embed-web-ui )
 	fi
 
+	export OPENCODE_VERSION="${PV}"
+	export OPENCODE_CHANNEL="latest"
 	bun run script/build.ts "${build_args[@]}" || die "Build failed"
 
 	local out_bin="${S}/packages/opencode/dist/opencode-linux-${arch}/bin/opencode"
